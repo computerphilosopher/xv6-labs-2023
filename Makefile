@@ -187,10 +187,8 @@ UPROGS=\
 	$U/_usertests\
 	$U/_grind\
 	$U/_wc\
+	$U/_sleep\
 	$U/_zombie\
-
-
-
 
 ifeq ($(LAB),$(filter $(LAB), lock))
 UPROGS += \
