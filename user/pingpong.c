@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
 
   //child
   if (pid == 0) {
-    char buf[100] ={0};
+    char buf[100] = {0};
     read(pipe_fd[READ_FD], buf, 4);
     fprintf(2, "%d: received ping\n", getpid());
 
