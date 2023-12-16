@@ -189,6 +189,7 @@ UPROGS=\
 	$U/_wc\
 	$U/_sleep\
 	$U/_pingpong\
+	$U/_primes\
 	$U/_zombie\
 
 ifeq ($(LAB),$(filter $(LAB), lock))
