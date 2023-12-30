@@ -126,7 +126,46 @@ static uint64 (*syscalls[])(void) = {
 [SYS_link]    sys_link,
 [SYS_mkdir]   sys_mkdir,
 [SYS_close]   sys_close,
+[SYS_trace]   sys_trace,
 };
+
+static const char *syscall_names[] = {
+  "", //syscall start from 1(SYS_fork)
+  "fork",
+  "exit",
+  "wait",
+  "pipe",
+  "read",
+  "kill",
+  "exec",
+  "fstat",
+  "chdir",
+  "dup",
+  "getpid",
+  "sbrk",
+  "sleep",
+  "uptime",
+  "open",
+  "write",
+  "mknod",
+  "unlink",
+  "link",
+  "mkdir",
+  "close",
+  "trace",
+};
+
+void print_trace(struct proc *p, int syscall_id) {
+  int trace_mask = 1 << syscall_id;
+  if ((p->trace_mask & trace_mask) == 0) {
+    return;
+  }
+
+  const char *name = syscall_names[syscall_id];
+  int ret = p->trapframe->a0;
+
+  printf("%d: syscall %s -> %d\n", p->pid, name, ret);
+}
 
 void
 syscall(void)
@@ -139,9 +178,14 @@ syscall(void)
     // Use num to lookup the system call function for num, call it,
     // and store its return value in p->trapframe->a0
     p->trapframe->a0 = syscalls[num]();
+    acquire(&p->lock);
+    if (p->trace_mask != 0) {
+      print_trace(p, num);
+    }
+    release(&p->lock);
   } else {
     printf("%d %s: unknown sys call %d\n",
-            p->pid, p->name, num);
+           p->pid, p->name, num);
     p->trapframe->a0 = -1;
   }
 }
