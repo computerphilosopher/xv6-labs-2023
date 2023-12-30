@@ -690,3 +690,18 @@ procdump(void)
     printf("\n");
   }
 }
+
+int
+count_proc(void)
+{
+  int count = 0;
+
+  for(int i = 0; i < NPROC; i++) {
+    struct proc p = proc[i];
+    acquire(&p.lock);
+    count += p.state != UNUSED;
+    release(&p.lock);
+  }
+
+  return count;
+}
